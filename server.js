@@ -3,24 +3,33 @@ const express = require('express');
 
 // Create an Express app
 const app = express();
-/*
 // 1. Be Polite, Greet the User 
 app.get('/greetings/:name', (req,res) => {
   res.send(`Hello there, ${req.params.name}`);
-});
- 
-// 2. Rolling the Dice
-app.get('/roll/:number', (req,res) => {
-  let num = req.params.number;
-  num = parseInt(num); //converts num w/c is currently a string into a number
+  });
+  
+  // 2. Rolling the Dice
+// app.get('/roll/:number', (req,res) => {
+//   let num = req.params.number;
+//   num = parseInt(num); //converts num w/c is currently a string into a number
+  
+//   if (Number.isInteger(num) == true) {
+//     res.send(` You roll a ${num}`);
+//   }else {
+//     res.send(`You must specify a number.`);
+//   }
+// });
 
-  if (Number.isInteger(num) == true) {
-    res.send(` You roll a ${num}`);
-  }else {
-    res.send(`You must specify a number.`);
+app.get('/roll/:limit', (req, res) => {
+  if (!Number.isInteger(parseInt(req.params.limit))) {
+    res.send('You must specify a valid number.');
+  } else {
+    const result = Math.floor(Math.random() * parseInt(req.params.limit));
+    res.send(`You rolled a ${result}.`)
   }
 });
-
+        
+/*
 // 3. I Want THAT One!
 app.get('/collectibles/:item', (req,res) => {
   const collectibles = [
@@ -57,21 +66,32 @@ const shoes = [
   { name: "Fifty-Inch Heels", price: 175, type: "heel" }
 ];
 
-app.get('/shoes/:soles', (req,res) => {
-  let setShoe = req.params.soles;
-  let data =[]
+app.get('/shoes', (req,res) => {
+
+  shoes.forEach((shoe) => {
+    if (
+      !(req.query['max-price'] && shoe.price > req.query['max-price']) &&
+      !(req.query['min-price'] && shoe.price < req.query['min-price']) &&
+      !(req.query['type'] && shoe.type !== req.query['type'])
+    ) {
+        results.push(shoe);
+      }
+  });
+  res.send(results);
+
+  // let setShoe = req.params.soles;
+  // let data =[]
   
   //type
-  for(let i = 0; i< shoes.length; i++) {
-    if (setShoe === shoes[i].type) {
-      data.push(shoes[i].name)
-    }
-  }
-  res.send(`${data}`)
+  // for(let i = 0; i< shoes.length; i++) {
+  //   if (setShoe === shoes[i].type) {
+  //     data.push(shoes[i].name)
+  //   }
+  // }
+  // res.send(`${data}`)
+
+
 });
-
-
-
 
 app.listen(3000, () => {
   console.log('Listening on port 3000')
